@@ -4,7 +4,7 @@ namespace app\controllers;
  //cuando la llame lo hare con 'use App\controllers\UserController'}
  use Psr\Http\Message\ResponseInterface as Response;
  use Psr\Http\Message\ServerRequestInterface as Request;
- use App\controllers\User;
+ use App\Models\User;
 class UserController{
     public function login(Request $request, Response $response){
         //se trae el cuerpo de la solicitud http (datos de la peticion)
@@ -13,14 +13,16 @@ class UserController{
         $datos['contraseña'] ?? null;
         //utilizo metodo logear de User
         $ok = User::logear($datos['usuario'],$datos['contraseña']);
+        $pass = $ok['password'];
+
         //compruebo si el usuario pudo iniciar sesion
-        if (is_null($ok)){
-            $response->getBody()->write(json_encode(["error"=>"error al iniciar sesion"]));
-            $response = $response->withHeader('Content-Type', 'application/json')->withStatus(401);
-            return $response;
-        }else{
+        if (password_verify($datos['contraseña'],$ok['password'])){
             $response->getBody()->write(json_encode(['msj:'=>'ingreso con exito']));
             $response = $response->withHeader('Content-type', 'application/json')->withStatus(202);
+            return $response;
+        }else{
+            $response->getBody()->write(json_encode(["error"=>"error al iniciar sesion"]));
+            $response = $response->withHeader('Content-Type', 'application/json')->withStatus(401);
             return $response;
         }
     }
@@ -28,7 +30,7 @@ class UserController{
         $datos = $request->getParsedBody();
         $aux = User::registrar($datos['nombre'],$datos['usuario'],$datos['password']);
         if ($aux){
-            $response= $response->getBody()->write(json_encode(['mensaje:'=>'registro completado']));
+             $response->getBody()->write(json_encode(['mensaje:'=>'registro completado']));
             $response = $response->withHeader('Content-Type', 'application/json')->withStatus(201);
             return $response;
         }else{
@@ -36,6 +38,10 @@ class UserController{
             $response = $response->withHeader('Content-Type', 'application/json')->withStatus(400);
             return $response;
         }
+    }
+
+    public function actualizar(Request $request, Response $response, array $args){
+        
     }
 }
 ?>

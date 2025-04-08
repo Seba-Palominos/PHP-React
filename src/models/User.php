@@ -1,6 +1,6 @@
 <?php
-    namespace App\controllers;
-    use App\controller\BD;
+    namespace App\models;
+    use App\models\BD;
     use Exception;
     //cuando se quiera acceder'use App\controllers\User'
     class User{
@@ -14,7 +14,7 @@
         $aux->execute(); // ejecuto la consulta
 
 
-        return $raw = $aux->fetch(PDO::FETCH_ASSOC); //fetch(PDO::FETCH_ASSOC) metodo que devuelve la fila obtenida en un arreglo asociativo
+        return $raw = $aux->fetch(\PDO::FETCH_ASSOC); //fetch(PDO::FETCH_ASSOC) metodo que devuelve la fila obtenida en un arreglo asociativo
       }
       public static function registrar($nombre,$usuario,$password){
         try{
@@ -27,15 +27,16 @@
         if ($stmt ->fetchColumn() > 0){
           return false;
         }
-        //insertar nuevos datos a la tabla
-        $sql = 'INSERT INTO usuario(nombre,usuario,password) VALUES(:nombre,:usuario,:password)';
-        $aux=$cnx->prepare($sql);
-        $password = password_hash($password, PASSWORD_BCRYPT);
-        $aux->bindParam(':nombre',$nombre);
-        $aux->bindParam(':usuario',$usuario);
-        $aux->bindParam(':password',$password);
-        $aux->execute();
-        return $aux;
+        //insertar nuevos datos a la tabla        
+          $sql = 'INSERT INTO usuario(nombre,usuario,password) VALUES(:nombre,:usuario,:password)';
+          $aux=$cnx->prepare($sql);
+          $aux->bindParam(':nombre',$nombre);
+          $aux->bindParam(':usuario',$usuario);
+          $aux->bindParam(':password',$password);
+          $aux->execute();
+          return true;
+        
+      
       }catch(Exception $e){
         echo'Error en el controlador del registro'.$e->getMessage();
         return false;

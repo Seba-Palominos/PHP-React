@@ -1,10 +1,11 @@
 <?php
+
 use Slim\App;
-use App\Controllers\UserControllers;
-    return function(App $app){ 
-    $app->post('/login','\app\controllers\UserController:login');
+use App\Controllers\UserController;
 
-    $app->POST('registro','\app\controllers\Usercontrollers:registro');
-    }
-
-?>
+return function(App $app) { 
+    $app->post('/login', UserController::class . ':login');
+    $app->post('/registro', UserController::class . ':registro');
+    $app->put('/usuarios&/{usuario}',UserController::class. ':actualizar');
+    $app->get('/usuario/{usuario}',UserController::class. ':traerDatos');
+};
