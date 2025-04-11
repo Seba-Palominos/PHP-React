@@ -4,11 +4,11 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 use Slim\App;
 
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
 $app = AppFactory::create();
 $app->addBodyParsingMiddleware();
 
-(require __DIR__. '/../src/routes/usuarioRutas')($app) ;
+(require __DIR__. '/src/routes/usuarioRutas.php')($app) ;
 
 $app->run();
