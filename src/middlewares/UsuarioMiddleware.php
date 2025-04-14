@@ -11,7 +11,7 @@ use Slim\Psr7\Response;
         $datos = $request->getParsedBody();
         $ok = true;
         foreach($datos as $key => $value){
-            if(empty($value)){
+            if(empty($value) ){
                 $ok = false;
             }
         }

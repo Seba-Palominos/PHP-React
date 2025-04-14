@@ -7,67 +7,66 @@ namespace app\controllers;
  use Psr\Http\Message\ServerRequestInterface as Request;
  use App\Models\User;
 class UserController{ 
+    public function respuesta($mensaje,$estado,Response $response){
+        $response->getBody()->write(json_encode($mensaje));
+        $response = $response->withHeader("Content-Type","application/json")->withStatus($estado);
+        return $response;
+    }
     public function login(Request $request, Response $response){
         //se trae el cuerpo de la solicitud http (datos de la peticion)
         $datos = $request->getParsedBody(); //getParsedBody trae los datos y los convierte en un array asociativo 
         //utilizo metodo logear de User
         $ok = User::logear($datos['usuario'],$datos['contraseña']);
-        
-
         //compruebo si el usuario pudo iniciar sesion
         if ($ok){
-            $token = User::generarToken($datos['usuario']);
-            $response->getBody()->write(json_encode(['token:'=>$token]));
-            $response = $response->withHeader('Content-type', 'application/json')->withStatus(202);
-            return $response;
+            $token = bin2hex(random_bytes(32)); //genero token con bin2hex, random_bytes indica que se genera un string random y dentro lleva como parametro la cantidad de bytes
+            $zona_horaria = 'America/Argentina/Buenos_Aires';   //ajusto la zona horaria en la que va a vecer el token creado 
+            $zona= new \DateTimeZone($zona_horaria);
+            $fecha = new DateTime();
+            $fecha->setTimezone($zona);
+            $fecha->modify('+1 hour');
+            $fechaSQL = $fecha->format('Y-m-d H:i:s');
+            User::guardarToken($datos['usuario'],$token,$fechaSQL);
+            return $this->respuesta(["token" => "$token"],202,$response);
         }else{
-            $response->getBody()->write(json_encode(["error"=>"error al iniciar sesion, usuario o contraseña incorrecta"]));
-            $response = $response->withHeader('Content-Type', 'application/json')->withStatus(401);
-            return $response;
+           return $this->respuesta(["error"=> "error al iniciar sesion, no se esncuentra usuario"],400,$response);
         }
     }
     public function registro(Request $request, Response $response){
         $datos = $request->getParsedBody();
         $aux = User::registrar($datos['nombre'],$datos['usuario'],$datos['contraseña']);
         if ($aux){
-             $response->getBody()->write(json_encode(['mensaje:'=>'registro completado']));
-            $response = $response->withHeader('Content-Type', 'application/json')->withStatus(201);
-            return $response;
+            return $this->respuesta(["mensaje" =>"registro completado"],201,$response);
         }else{
-            $response->getBody()->write(json_encode(['error:'=> 'no se pudo registrar el usuario,el usuario posiblemente ya existe']));
-            $response = $response->withHeader('Content-Type', 'application/json')->withStatus(400);
-            return $response;
+            return $this->respuesta(["error" =>"el usuario posiblemente ya existe"],400,$response);
         }
 
     }
 
     public function actualizar(Request $request, Response $response, array $args){
-        
-        $data = User::tokenVencido($args['usuario']);
-        $zonaHoraria = new DateTimeZone('America/Argentina/Buenos_Aires');
-        $actual = new DateTime();
-        $actual ->setTimezone($zonaHoraria);
-        $hora = $actual->format('Y-m-d H:i:s');
-        if ($hora >= $data){
-            $response ->getBody()->write(json_encode(['mensaje'=> 'expiro el inicio de sesion, vuelva a ingresar']));
-            return $response;
-        }
-        $datos = $request->getParsedBody();
-        $ok=User::actualizarDatos($datos['usuario'],$datos['contraseña']);
-        if ($ok){
-            $response->getBody()->write(json_encode(['mensaeje'=> 'se actualizaron los datos']));
-            $response = $response->withHeader('content-type', 'application/json')->withStatus(201);   
-        }
-        else{
-            $response->getBody()->write(json_encode(['mensaeje'=> 'no se pudo actualizar los datos']));
-            $response = $response->withHeader('content-type', 'application/json')->withStatus(400);
-        }
-        return $response;
+             $datos = $request->getParsedBody();
+             $aux = User::actualizar($args['usuario'],$datos['nombre'],$datos['contraseña']);
+             if ($aux){
+                return $this->respuesta(["mensaje" =>"datos actualizados"],200,$response);
+             }
+             else{
+                $response->getBody()->write(json_encode(["mensaje"=>"no se pudo actualizar los datos"]));
+                return $this->respuesta(["mensaje" =>"no se pudo actualizar los datos"],400,$response);
+             }
+   
     }
 
     public function traerDatos(Request $request, Response $response, array $args){
-        User::datosUsuario($args['usuario']);
+        $datos = User::traerDatos($args['usuario']);
+        if ($datos != null){
+            return $this->respuesta(["nombre"=>$datos['nombre'],"usuario" => $datos['usuario']],200,$response);
+        }else{
+            return $this->respuesta(["error" =>"no hay datos"],404,$response);
+        }    
     
     }
+
+    
+    
 }
 ?>
