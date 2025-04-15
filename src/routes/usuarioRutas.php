@@ -11,5 +11,5 @@ return function(App $app) {
     $app->put('/usuarios&/{usuario}',UserController::class. ':actualizar')->add(UsuarioMiddleware::class)
     ->add(Alfanumerico::class)
     ->add(ValidacionToken::class);
-    $app->get('/usuario/{usuario}',UserController::class. ':traerDatos');
+    $app->get('/usuario/{usuario}',UserController::class. ':traerDatos')->add(ValidacionToken::class);
 };
