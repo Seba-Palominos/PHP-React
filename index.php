@@ -10,5 +10,6 @@ $app = AppFactory::create();
 $app->addBodyParsingMiddleware();
 
 (require __DIR__. '/src/routes/usuarioRutas.php')($app) ;
+(require __DIR__. '/src/routes/MazoRutas.php')($app);
 
 $app->run();

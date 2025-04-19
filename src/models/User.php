@@ -8,7 +8,7 @@
       public static function guardarToken($usuario,$token,$fechaSQL){
         //Realizo la consulta sql
         $cnx = BD::conectar();
-        $sql = 'UPDATE usuario SET token = :token, vencimineto_token = :fechaSQL where usuario = :usuario ';
+        $sql = 'UPDATE usuario SET token = :token, vencimiento_token = :fechaSQL where usuario = :usuario ';
         $result = $cnx->prepare($sql);
         $result->bindParam(':token',$token);
         $result->bindParam(':fechaSQL',$fechaSQL);
@@ -74,7 +74,7 @@
    }
    public static function validarToken($token){
     $cnx = BD::conectar();
-    $sql = 'SELECT vencimineto_token FROM usuario WHERE token = :token';
+    $sql = 'SELECT vencimiento_token FROM usuario WHERE token = :token';
     $aux=$cnx->prepare($sql);
     $aux->bindParam(':token',$token);
     $aux->execute();
