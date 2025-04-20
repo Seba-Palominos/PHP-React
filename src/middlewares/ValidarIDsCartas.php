@@ -19,20 +19,25 @@ class ValidarIDsCartas implements MiddlewareInterface{
     }
 public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface{
     $ids = $request->getParsedBody();
-    if (count($ids) != 5) 
+    $copia =[];
+    foreach($ids as $values){
+        if (is_int($values))
+            $copia[]=$values;
+    }
+    if (count($copia) != 5) 
         return $this->respuesta(new Response(),["error"=> "no selecciono 5 cartas"]);
 
     if ($this->elementosIguales($ids))
-        return $this->respuesta(new Response(),["error"=> "hay cartas iguales"]);
+        return $this->respuesta(new Response(),["error"=> "hay cartas iguales en el mazo"]);
     $cumple = true;
-    foreach ($ids as $values){
+    foreach ($copia as $values){
         if (!Mazo::cartaValida($values)){
             $cumple = false;
             break;
         }
     }
-    if ($cumple == false)
-        return $this-> respuesta(new Response(),["error"=> "hay algun id que no existe"]);
+    if ($cumple === false)
+        return $this-> respuesta(new Response(),["error"=> "hay algun id inexistente"]);
 
     return $handler->handle($request);
 }

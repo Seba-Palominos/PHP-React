@@ -16,7 +16,10 @@ class ValidacionToken implements MiddlewareInterface{
             $response = $response->withHeader("Content-Type","application/json");
             return $response;
         }else{
-            if (!User::validarToken($token) ){
+            $routeContext = \Slim\Routing\RouteContext::fromRequest($request);
+            $route = $routeContext->getRoute();
+            $id = $route->getArgument("usuario");
+            if (!User::validarToken($token,$id) ){
                 $response = new Response();
                 $response->getBody()->write(json_encode(["error"=> "Inicio de sesion expirado o no se encuentra token"]));
                 $response = $response->withHeader("Content-Type","application/json");

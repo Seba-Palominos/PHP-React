@@ -72,11 +72,12 @@
     $aux->execute();
     return $aux->fetch(\PDO::FETCH_ASSOC);
    }
-   public static function validarToken($token){
+   public static function validarToken($token,$id){
     $cnx = BD::conectar();
-    $sql = 'SELECT vencimiento_token FROM usuario WHERE token = :token';
+    $sql = 'SELECT vencimiento_token FROM usuario WHERE token = :token AND id = :id';
     $aux=$cnx->prepare($sql);
     $aux->bindParam(':token',$token);
+    $aux->bindParam('id',$id);
     $aux->execute();
     $fechaVencimiento = $aux->fetch(\PDO::FETCH_ASSOC);
     if (!$fechaVencimiento){
@@ -89,5 +90,5 @@
     }
     return true;
    }
-    }
+   }
 ?>
