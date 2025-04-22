@@ -5,6 +5,9 @@
     use Exception;
     //cuando se quiera acceder'use App\models\User'
     class User{
+      public static function getID($token){
+        
+      }
       public static function guardarToken($usuario,$token,$fechaSQL){
         //Realizo la consulta sql
         $cnx = BD::conectar();
@@ -85,7 +88,7 @@
     }
     $zona = new \DateTimeZone('America/Argentina/Buenos_Aires'); // o la que necesites
     $ahora = new DateTime('now', $zona);
-    if ($ahora->format('Y-m-d H:i:s') >= $fechaVencimiento['vencimineto_token']) {
+    if ($ahora->format('Y-m-d H:i:s') >= $fechaVencimiento['vencimiento_token']) {
       return false;
     }
     return true;
