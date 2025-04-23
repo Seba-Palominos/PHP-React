@@ -2,6 +2,15 @@
     namespace App\models;
     use App\models\BD;
     class Mazo{
+        public static function cantMazos($id){
+            $sql = "SELECT COUNT(*) AS cantidad FROM mazo WHERE usuario_id = :id";
+            $conn = BD::conectar();
+            $cons = $conn -> prepare($sql);
+            $cons ->bindParam(":id", $id);
+            $cons -> execute();
+            $datos = $cons -> fetch(\PDO::FETCH_ASSOC);
+            return (count($datos['cantidad']) < 3) ? true : false ;
+        }
         public static function cartaValida($id){
             $cnx = BD::conectar();
             $sql = "SELECT id FROM carta WHERE id = :id";
