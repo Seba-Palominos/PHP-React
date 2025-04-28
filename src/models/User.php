@@ -80,7 +80,7 @@
     $sql = 'SELECT vencimiento_token FROM usuario WHERE token = :token AND id = :id';
     $aux=$cnx->prepare($sql);
     $aux->bindParam(':token',$token);
-    $aux->bindParam('id',$id);
+    $aux->bindParam(':id',$id);
     $aux->execute();
     $fechaVencimiento = $aux->fetch(\PDO::FETCH_ASSOC);
     if (!$fechaVencimiento){

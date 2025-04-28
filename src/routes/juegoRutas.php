@@ -1,5 +1,7 @@
 <?php
 use Slim\App;
+use App\middlewares\ValidacionToken;
 use App\controllers\juegoController;
-$app->post('/partidas', juegoController::class .':pertenece');
+use App\middlewares\UsuarioMiddleware;
+$app->post('/partidas', juegoController::class .':pertenece')->add(ValidacionToken::class)->add(UsuarioMiddleware::class);
 ?>

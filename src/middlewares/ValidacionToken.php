@@ -1,5 +1,5 @@
 <?php
-namespace app\middlewares;
+namespace App\middlewares;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -8,29 +8,24 @@ use Slim\Psr7\Response;
 use App\models\User;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use App\services\Respuesta;
 class ValidacionToken implements MiddlewareInterface{
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface{
         $token = $request->getHeaderline("Authorization");
         if(empty($token)){
-            $response = new Response();
-            $response->getBody()->write(json_encode(["error"=>"no se envio token"]));
-            $response = $response->withHeader("Content-Type","application/json");
-            return $response;
+            return Respuesta::respuesta(new Response(),["error"=>"no se envio token"],400);
         }else{
-            if (strpos($token, 'Bearer ') === 0) {
-                $token = substr($token, 7);
-            }
+            try{
             $decodificado = JWT::decode($token,new Key('la_calve_de_la_triple_s','HS256'));
             $id = $decodificado->data->id;
             if (!User::validarToken($token,$id) ){
-                $response = new Response();
-                $response->getBody()->write(json_encode(["error"=> "Inicio de sesion expirado o no se encuentra token"]));
-                $response = $response->withHeader("Content-Type","application/json");
-                return $response;
+                return Respuesta::respuesta(new Response(),["error"=> "Inicio de sesion expirado o no se encuentra token"],400);
             }
+            return $handler->handle($request);
+        }catch(\Throwable $e){
+            return Respuesta::respuesta(new Response(),["error"=> "Inicio de sesion expirado o no se encuentra token","detalle"=>$e->getMessage()],400);
         }
-        return $handler->handle($request);
-    }
+    }}
 }
 
 ?>

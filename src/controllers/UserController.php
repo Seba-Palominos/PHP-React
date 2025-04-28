@@ -1,6 +1,6 @@
 <?php
 //nombre de la ruta para llamarla
-namespace app\controllers; 
+namespace App\controllers; 
  //cuando la llame lo hare con 'use App\controllers\UserController'}
  use DateTime;
  use Psr\Http\Message\ResponseInterface as Response;
@@ -8,7 +8,7 @@ namespace app\controllers;
  use App\Models\User;
  use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use app\services\Respuesta;
+use App\services\Respuesta;
 class UserController{ 
 
     public function login(Request $request, Response $response){
@@ -62,7 +62,7 @@ class UserController{
     public function traerDatos(Request $request, Response $response, array $args){
         $datos = User::traerDatos($args['usuario']);
         if ($datos != null){
-           Respuesta::respuesta($response,["nombre"=>$datos['nombre'],"usuario" => $datos['usuario']],200);
+          return Respuesta::respuesta($response,["nombre"=>$datos['nombre'],"usuario" => $datos['usuario']],200);
         }else{
             return Respuesta::respuesta($response,["error" =>"no hay datos"],404);
         }    

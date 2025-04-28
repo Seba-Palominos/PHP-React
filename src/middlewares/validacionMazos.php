@@ -1,5 +1,5 @@
 <?php
-namespace app\middlewares;
+namespace App\middlewares;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -7,8 +7,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Psr7\Response;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use app\services\Respuesta;
-use app\models\Mazo;
+use App\services\Respuesta;
+use App\models\Mazo;
 class ValidacionMazos implements MiddlewareInterface{
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface{
         $token = $request->getHeaderLine("Authorization");
@@ -20,4 +20,3 @@ class ValidacionMazos implements MiddlewareInterface{
     return $handler->handle($request);
     }
 }
-?>

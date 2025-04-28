@@ -38,6 +38,91 @@
             return $consulta->execute();
 
         }
+        public static function buscarCartas($atributo , $nombre ) {
+            // agregar try y catch
+                // me conecto a la base de datos
+                $cnx = BD::conectar();
+                
+                // selecciono toda las cartas
+                $sql = "SELECT id, nombre, atributo, puntos_ataque FROM carta";
+                
+                $conditions = [];
+                $params = [];
+            
+                if ($atributo !== null) {
+                    $conditions[] = "atributo = :atributo";
+                    $params[':atributo'] = $atributo;
+                }
+            
+                if ($nombre !== null) {
+                    $conditions[] = "nombre LIKE :nombre";
+                    $params[':nombre'] = "%$nombre%";
+                }
+            
+                // si se cumple se lo agrego a sql
+                if (!empty($conditions)) {
+                    $sql .= " WHERE " . implode(" AND ", $conditions);
+                }
+            
+                $stmt = $cnx->prepare($sql);
+                $stmt->execute($params);
+            
+                return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        }
+
+        public static function actualizarEstado($estado,$idMazo){
+            $sql = "UPDATE mazo_carta SET estado = :estado WHERE mazo_id = :id";
+            $cnx = BD::conectar();
+            $consulta = $cnx->prepare($sql);
+            $consulta->bindParam(":estado", $estado);
+            $consulta->bindParam(":id", $idMazo);
+            $consulta->execute();
+            return $consulta;
+        }
+        public static function cambiarNombreMazo($mazoId, $nuevoNombre, $userId) {
+
+            $cnx = BD::conectar();
+            $sql = "UPDATE MAZOS SET NOMBRE = :nombre WHERE id = mazoId and usuarioId =: userId";
+            $stmt = $cnx->prepare($sql);
+
+            $stmt->bindParam(':nombre', $nuevoNombre);
+            $stmt->bindParam(':mazoId', $mazoId, \PDO::PARAM_INT);
+            $stmt->bindParam(':userId', $userId, \PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->rowCount() > 0;
+
+        }   
+
+        public static function obtenerMazoID($userId) {
+            $cnx = BD::conectar();
+            $sql = "SELECT * FROM mazos WHERE usuario_id = :id";
+            $stmt = $cnx->prepare($sql);
+            $stmt->bindParam(':id', $userId, \PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        }
+        public static function borrarMazo(int $mazoId, int $userId): bool {
+            // Verificar participación en partidas
+            $cnx = BD::conectar();
+            
+            $sql = "SELECT 1 FROM partidas p JOIN mazos m ON p.mazo_id = m.id WHERE m.id = :mazoId AND m.usuario_id = :userId LIMIT 1";
+            $stmt = $cnx->prepare($sql);
+            $stmt->bindParam(':mazoId', $mazoId, \PDO::PARAM_INT);
+            $stmt->bindParam(':userId', $userId, \PDO::PARAM_INT);
+            $stmt->execute();
+            if ($stmt->fetch()) {
+                throw new \Exception("El mazo ya participó en una partida y no puede borrarse.");
+            }
+    
+            $sql = ("DELETE FROM mazos WHERE id = :mazoId AND usuario_id = :userId");
+            $stmt = $cnx->prepare($sql);
+            $stmt->bindParam(':mazoId', $mazoId, \PDO::PARAM_INT);
+            $stmt->bindParam(':userId', $userId, \PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->rowCount() > 0;
+        }
+
     }
+    
 
 ?>
