@@ -3,7 +3,8 @@
 namespace App\controllers; 
  //cuando la llame lo hare con 'use App\controllers\UserController'}
  use DateTime;
- use Psr\Http\Message\ResponseInterface as Response;
+ use Exception;
+use Psr\Http\Message\ResponseInterface as Response;
  use Psr\Http\Message\ServerRequestInterface as Request;
  use App\Models\User;
  use Firebase\JWT\JWT;
@@ -48,6 +49,7 @@ class UserController{
     }
 
     public function actualizar(Request $request, Response $response, array $args){
+        try{
              $datos = $request->getParsedBody();
              $aux = User::actualizar($args['usuario'],$datos['nombre'],$datos['contraseña']);
              if ($aux){
@@ -56,6 +58,9 @@ class UserController{
              else{
                 return Respuesta::respuesta($response,["mensaje" =>"no se pudo actualizar los datos"],400);
              }
+        }catch(Exception $e){
+            return Respuesta::respuesta($response,["error"=>"error de excepcion"],500);
+        }
    
     }
 

@@ -7,7 +7,7 @@
                         FROM mazo_carta mc
                         JOIN carta c ON mc.carta_id = c.id
                         WHERE mc.mazo_id = :idMazo
-                          AND mc.estado = 'en_mazo'";  // Podrías quitar esta línea si querés todos
+                          AND mc.estado = 'en_mazo'";  
             
                 $cnx = BD::conectar();
                 $consulta = $cnx->prepare($sql);

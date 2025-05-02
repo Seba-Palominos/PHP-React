@@ -34,5 +34,13 @@ class juegoController{
             return Respuesta::respuesta($response,["error en peticion"=>$e->getMessage()],500);
         }    
     }
+    public function jugada(Request $request,Response $response){
+        try{
+            $datos =$request->getParsedBody(); 
+
+        }catch(Exception $e){
+            return Respuesta::respuesta($response,["error"=> "error en controlador jugada"],404);
+        } 
+    }
 }
 ?>

@@ -9,7 +9,7 @@
             $cons ->bindParam(":id", $id);
             $cons -> execute();
             $datos = $cons -> fetch(\PDO::FETCH_ASSOC);
-            return (count($datos['cantidad']) < 3) ? true : false ;
+            return ($datos['cantidad'] < 3) ? true : false ;
         }
         public static function cartaValida($id){
             $cnx = BD::conectar();
@@ -25,8 +25,9 @@
             $consulta = $conn -> prepare($sql);
             $consulta ->bindParam(':id', $id);
             $consulta->bindParam(':nombre',$nombre);
-            $consulta->execute();
-            return $consulta->fetch(\PDO::FETCH_ASSOC);
+            if ($consulta->execute())
+                return $conn->lastInsertId();
+            return false;
         }
         public static function mazo_carta($idCarta,$idMazo,$estado){
             $sql = 'INSERT INTO mazo_carta (carta_id,mazo_id,estado) VALUES (:idC,:idMazo,:estado)';

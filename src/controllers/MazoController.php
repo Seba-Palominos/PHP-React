@@ -15,18 +15,18 @@ class MazoController{
         $datos = $request->getParsedBody();
         $token = $request->getHeaderLine('authorization');
         $decod = JWT::decode($token,new Key('la_calve_de_la_triple_s','HS256'));
-        $datosMazo = Mazo::crearMazo($decod->data->id,$datos['nombre']);
-        if (!$datosMazo){   
-            return Respuesta::respuesta($response,['error'=>'no se pudo crear mazo'],0);
+        $idMazo = Mazo::crearMazo($decod->data->id,$datos['nombre']);
+        if (!$idMazo){   
+            return Respuesta::respuesta($response,['error'=>'no se pudo crear mazo'],400);
         }
         foreach($datos as $value){
             if (is_int($value)){
-                $ok=Mazo::mazo_carta($value,$datosMazo['id'],'en_mazo');
+                $ok=Mazo::mazo_carta($value,$idMazo,'en_mazo');
                 if (!$ok)
-                return Respuesta::respuesta( $response,['error'=>'no se pudo guardar carta en el mazo'],0);
+                return Respuesta::respuesta( $response,['error'=>'no se pudo guardar carta en el mazo'],400);
             }
         }
-        return Respuesta::respuesta( $response,['nombre mazo'=> $datos['nombre'],'id mazo'=>$datosMazo['id']],0);
+        return Respuesta::respuesta( $response,['nombre mazo'=> $datos['nombre'],'id mazo'=>$idMazo],200);
     }
     public function cartas(Request $request, Response $response, array $args) {
         $queryParams = $request->getQueryParams();
