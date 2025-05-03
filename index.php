@@ -11,5 +11,5 @@ $app->addBodyParsingMiddleware();
 
 (require __DIR__. '/src/routes/usuarioRutas.php')($app) ;
 (require __DIR__. '/src/routes/MazoRutas.php')($app);
-
+(require __DIR__. '/src/routes/juegoRutas.php')($app);
 $app->run();

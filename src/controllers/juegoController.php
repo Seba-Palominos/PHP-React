@@ -28,19 +28,15 @@ class juegoController{
         if(!Mazo::actualizarEstado("en_mano",$datos['idMazo']))
             return Respuesta::respuesta($response,['error'=>'no se pudo actualizar estado de mazo'],404);
         $cartas = MazoCarta::getDatos($datos['idMazo']);
+        if(empty($cartas)){
+            return Respuesta::respuesta($response,["msj"=>"no hay datos de cartas"],400);
+        }
         return Respuesta::respuesta($response,['id_partida'=> $dPartida,'carta'=>$cartas],200);
         }
         catch(Exception $e){
             return Respuesta::respuesta($response,["error en peticion"=>$e->getMessage()],500);
         }    
     }
-    public function jugada(Request $request,Response $response){
-        try{
-            $datos =$request->getParsedBody(); 
-
-        }catch(Exception $e){
-            return Respuesta::respuesta($response,["error"=> "error en controlador jugada"],404);
-        } 
-    }
+ 
 }
 ?>

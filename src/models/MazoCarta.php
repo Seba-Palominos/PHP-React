@@ -2,19 +2,13 @@
     namespace App\models;
     use App\models\BD;
     class MazoCarta{
-        public static function getDatos(int $idMazo){
-                $sql = "SELECT nombre,ataque,ataque_nombre,imagen,atributo
-                        FROM mazo_carta mc
-                        JOIN carta c ON mc.carta_id = c.id
-                        WHERE mc.mazo_id = :idMazo
-                          AND mc.estado = 'en_mazo'";  
-            
-                $cnx = BD::conectar();
-                $consulta = $cnx->prepare($sql);
-                $consulta->bindParam(":idMazo", $idMazo, \PDO::PARAM_INT);
-                $consulta->execute();
-                
-                return $consulta->fetchAll(\PDO::FETCH_ASSOC);
+        public static function getDatos( $idMazo){
+            $sql ="SELECT carta.nombre FROM carta INNER JOIN mazo_carta ON carta.id = mazo_carta.carta_id WHERE mazo_carta.mazo_id = :idMazo";
+            $cnx = BD::conectar();
+            $consulta = $cnx->prepare($sql);
+            $consulta->bindParam(":idMazo", $idMazo);
+            $consulta->execute();    
+            return $consulta->fetchAll(\PDO::FETCH_ASSOC);
             }
         }
     

@@ -8,9 +8,6 @@ use Firebase\JWT\Key;
  use App\services\Respuesta;
 
 class MazoController{
-    public function respuesta(){
-
-    }
     public function recibirCartas(Request $request,Response $response){
         $datos = $request->getParsedBody();
         $token = $request->getHeaderLine('authorization');
@@ -48,12 +45,7 @@ class MazoController{
         $TokenuserId = $decod->data->id;
         $mazoId = (int)$args['mazo'];
         $data = $request->getParsedBody();
-        $nuevoNombre = $data['nombre'];
-        
-        if (!$nuevoNombre) {
-            $response->getBody()->write(json_encode(["error" => "El campo 'nombre' es requerido."]));
-            return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
-        }       
+        $nuevoNombre = $data['nombre'];      
 
         $ok = Mazo::cambiarNombreMazo($mazoId, $nuevoNombre, $TokenuserId);
     
