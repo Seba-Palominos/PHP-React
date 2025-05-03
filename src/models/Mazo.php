@@ -83,12 +83,12 @@
         public static function cambiarNombreMazo($mazoId, $nuevoNombre, $userId) {
 
             $cnx = BD::conectar();
-            $sql = "UPDATE MAZOS SET NOMBRE = :nombre WHERE id = mazoId and usuarioId =: userId";
+            $sql = "UPDATE mazo SET nombre = :nombre WHERE id = :mazoId and usuario_id = :userId";
             $stmt = $cnx->prepare($sql);
 
             $stmt->bindParam(':nombre', $nuevoNombre);
-            $stmt->bindParam(':mazoId', $mazoId, \PDO::PARAM_INT);
-            $stmt->bindParam(':userId', $userId, \PDO::PARAM_INT);
+            $stmt->bindParam(':mazoId', $mazoId);
+            $stmt->bindParam(':userId', $userId);
             $stmt->execute();
             return $stmt->rowCount() > 0;
 
@@ -96,17 +96,17 @@
 
         public static function obtenerMazoID($userId) {
             $cnx = BD::conectar();
-            $sql = "SELECT * FROM mazos WHERE usuario_id = :id";
+            $sql = "SELECT * FROM mazo WHERE usuario_id = :id";
             $stmt = $cnx->prepare($sql);
             $stmt->bindParam(':id', $userId, \PDO::PARAM_INT);
             $stmt->execute();
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         }
+      
         public static function borrarMazo(int $mazoId, int $userId): bool {
             // Verificar participación en partidas
             $cnx = BD::conectar();
-            
-            $sql = "SELECT 1 FROM partidas p JOIN mazos m ON p.mazo_id = m.id WHERE m.id = :mazoId AND m.usuario_id = :userId LIMIT 1";
+            $sql = "SELECT 1 FROM partida p JOIN mazo m ON p.mazo_id = m.id WHERE m.id = :mazoId AND m.usuario_id = :userId LIMIT 1";
             $stmt = $cnx->prepare($sql);
             $stmt->bindParam(':mazoId', $mazoId, \PDO::PARAM_INT);
             $stmt->bindParam(':userId', $userId, \PDO::PARAM_INT);
@@ -114,11 +114,11 @@
             if ($stmt->fetch()) {
                 throw new \Exception("El mazo ya participó en una partida y no puede borrarse.");
             }
-    
-            $sql = ("DELETE FROM mazos WHERE id = :mazoId AND usuario_id = :userId");
+            $cnx = BD::conectar();
+            $sql = "DELETE FROM mazo WHERE id = :mazoId AND usuario_id = :userId";
             $stmt = $cnx->prepare($sql);
-            $stmt->bindParam(':mazoId', $mazoId, \PDO::PARAM_INT);
-            $stmt->bindParam(':userId', $userId, \PDO::PARAM_INT);
+            $stmt->bindParam(':mazoId', $mazoId);
+            $stmt->bindParam(':userId', $userId);
             $stmt->execute();
             return $stmt->rowCount() > 0;
         }

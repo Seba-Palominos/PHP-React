@@ -6,7 +6,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Psr7\Response;
  
- class UsuarioMiddleware implements MiddlewareInterface{
+ class CamposVacios implements MiddlewareInterface{
     public  function process( ServerRequestInterface $request,RequestHandlerInterface $handler): ResponseInterface{
         $datos = $request->getParsedBody();
         $ok = true;

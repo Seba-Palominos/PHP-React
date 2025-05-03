@@ -43,17 +43,19 @@ class MazoController{
     }
 
     public function actualizarMazo(Request $request, Response $response, array $args): Response {
-        $userId = $request->getAttribute('userId');
+        $token = $request->getHeaderLine('Authorization');
+        $decod = JWT::decode($token,new Key('la_calve_de_la_triple_s','HS256'));
+        $TokenuserId = $decod->data->id;
         $mazoId = (int)$args['mazo'];
         $data = $request->getParsedBody();
-        $nuevoNombre = $data['nombre'] ?? null;
+        $nuevoNombre = $data['nombre'];
         
         if (!$nuevoNombre) {
             $response->getBody()->write(json_encode(["error" => "El campo 'nombre' es requerido."]));
             return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
         }       
 
-        $ok = Mazo::cambiarNombreMazo($mazoId, $nuevoNombre, $userId);
+        $ok = Mazo::cambiarNombreMazo($mazoId, $nuevoNombre, $TokenuserId);
     
         if (!$ok) {
             $response->getBody()->write(json_encode(["error" => "Mazo no encontrado o no pertenece al usuario."]));
@@ -65,29 +67,24 @@ class MazoController{
         return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
     }
     public function obtenerMazo(Request $request, Response $response, array $args): Response {
-        $tokenUserId = $request->getAttribute('userId');
+        $token = $request->getHeaderLine('Authorization');
+        $decod = JWT::decode($token,new Key('la_calve_de_la_triple_s','HS256'));
+        $TokenuserId = $decod->data->id;
         $paramUserId = (int)$args['usuario'];
-    
-        if (!$tokenUserId) {
-            $response->getBody()->write(json_encode(["error" => "No autorizado"]));
-            return $response->withStatus(401)->withHeader('Content-Type', 'application/json');
+        if ($TokenuserId != $paramUserId){
+            return Respuesta::respuesta($response,["error"=>"id no valido para ver mazos"],400);
         }
-    
-        if ($tokenUserId !== $paramUserId) {
-            $response->getBody()->write(json_encode(["error" => "No tienes permiso para ver estos mazos."]));
-            return $response->withStatus(403)->withHeader('Content-Type', 'application/json');
-        }
-    
-        $mazos = Mazo::obtenerMazoId($tokenUserId);
-    
-        $response->getBody()->write(json_encode(["mazos" => $mazos]));
-        return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
+        $mazos = Mazo::obtenerMazoId($paramUserId);
+        if (!$mazos)
+            return Respuesta::respuesta($response,["usuario"=>"el usuario no tiene mazos"],400);
+        return Respuesta::respuesta($response,["mazos"=>$mazos],200);
     }
-
     public function deleteMazo(Request $request, Response $response, array $args): Response {
-        $userId = $request->getAttribute('userId');
+        $token = $request->getHeaderLine('Authorization');
+        $decod = JWT::decode($token,new Key('la_calve_de_la_triple_s','HS256'));
+        $userId = $decod->data->id; 
         $mazoId = (int)$args['mazo'];
-    
+        
         try {
             $deleted = Mazo::borrarMazo($mazoId, $userId);
     
