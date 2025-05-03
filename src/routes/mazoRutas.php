@@ -15,6 +15,6 @@
     ->add(ValidacionToken::class);
     $app->get('/usuarios/{usuario}/mazo',MazoController::class .':obtenerMazo')->add(ValidacionToken::class);
     $app->put('/mazos/{mazo}',MazoController::class .':actualizarMazo')->add(CamposVacios::class);
-    $app->get(' /cartas?atributo={atributo}&nombre={nombre}',MazoController::class .'cartas');    
+    $app->get('/cartas',MazoController::class .':cartas');    
     }
 ?>

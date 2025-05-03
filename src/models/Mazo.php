@@ -45,13 +45,13 @@
                 $cnx = BD::conectar();
                 
                 // selecciono toda las cartas
-                $sql = "SELECT id, nombre, atributo, puntos_ataque FROM carta";
+                $sql = "SELECT id, nombre, atributo_id, ataque FROM carta";
                 
                 $conditions = [];
                 $params = [];
             
                 if ($atributo !== null) {
-                    $conditions[] = "atributo = :atributo";
+                    $conditions[] = "atributo_id = :atributo";
                     $params[':atributo'] = $atributo;
                 }
             
