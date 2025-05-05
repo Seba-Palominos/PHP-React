@@ -78,8 +78,12 @@ class juegoController{
                 if(!Juego::actualizarEstadoPartida('finalizada',$idPartida)){
                     return Respuesta::respuesta($response,['error'=>'no se actualizo el estado de la partida'],400);
                 }
-                Mazo::actualizarEstadoMazo('en_mazo',1);
-                
+                $token = $request->getHeaderLine('Authorization');
+                $decodificado = JWT::decode($token,new Key('la_calve_de_la_triple_s','HS256'));
+                $idUsuario = $decodificado->data->id;
+                $idMazoUsuario = MazoCarta::idMazo($idCarta);
+                Mazo::actualizarEstadoMazo('en_mazo',$idMazoUsuario);   
+                Mazo::actualizarEstadoMazo('en_mazo',1);               
             }
             return Respuesta::respuesta($response,[],200);
         }
