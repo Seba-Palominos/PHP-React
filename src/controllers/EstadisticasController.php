@@ -6,7 +6,7 @@
     use App\services\Respuesta;
     class EstadisticasController{
         public function estadisticasC(Request $request, Response $response,array $args){ 
-             {
+             
                 $datos = Estadisticas::estadisticas();
                 if($datos == null){
                     $response->getBody()->write(json_encode(['error'=>'No se registraron partidas']));
@@ -14,7 +14,7 @@
                 }
                 $response->getBody()->write(json_encode($datos));
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-            };
+            ;
         }
     }
 ?>

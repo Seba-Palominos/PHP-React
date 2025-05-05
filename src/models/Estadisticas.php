@@ -39,8 +39,8 @@ namespace App\models;
             $estadisticas = [];
         
             foreach ($resultados as $fila) {
-                $id = $fila['id_usuario'];
-                $estado = $fila['estado'];
+                $id = $fila['usuario_id'];
+                $estado = $fila['el_usuario'];
                 $cantidad = $fila['cantidad'];
         
                 if (!isset($estadisticas[$id])) {

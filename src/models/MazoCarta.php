@@ -10,6 +10,19 @@
             $consulta->execute();    
             return $consulta->fetchAll(\PDO::FETCH_ASSOC);
             }
+            public function actualizarEstado(){
         }
+        public static function actualizarEstadoCarta(string $estado,int $idCarta){
+            $sql = "UPDATE mazo_carta SET estado = :estado WHERE carta_id = :idCarta";
+            $cnx = BD::conectar();
+            $consulta = $cnx->prepare($sql);
+            $consulta->bindParam(':estado',$estado);
+            $consulta->bindParam('idCarta',$idCarta);
+            return $consulta->execute();
+        
+        }
+    }
+
+        
     
 ?>

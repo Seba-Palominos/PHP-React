@@ -71,7 +71,7 @@
                 return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         }
 
-        public static function actualizarEstado($estado,$idMazo){
+        public static function actualizarEstadoMazo($estado,$idMazo){
             $sql = "UPDATE mazo_carta SET estado = :estado WHERE mazo_id = :id";
             $cnx = BD::conectar();
             $consulta = $cnx->prepare($sql);
