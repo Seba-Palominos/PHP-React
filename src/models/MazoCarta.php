@@ -22,16 +22,18 @@
             return $consulta->execute();
         
         }
-        public static function idMazo(int $idCarta){
-            $sql = "SELECT mazo_id FROM mazo_carta WHERE carta_id = :idCarta";
+        // pasar id partida
+        //
+        public static function idMazo(int $idPartida){
+            $sql = "SELECT mazo_id FROM partida WHERE id = :idP";
             $cnx = BD::conectar();
             $consulta = $cnx->prepare($sql);
-            $consulta->bindParam(':idCarta',$idCarta);
+            $consulta->bindParam(':idP',$idPartida);
             if ($consulta->execute()){
                $datos = $consulta->fetch(PDO::FETCH_ASSOC);
                 return $datos['mazo_id'] ?? null;
             }else{
-                throw new \Exception('error en idMazo de MazoCarta');
+                throw new \Exception('error en idMazo de partida');
             }
 
         }
